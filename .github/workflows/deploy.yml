@@ -1,0 +1,47 @@
+name: OSL CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Change to your preferred Node version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compile TypeScript
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./dist  # Replace with your output directory
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist  # Directory containing the downloaded build artifact
