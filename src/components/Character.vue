@@ -49,7 +49,7 @@ export default {
     },
     getRandomAvatar() {
       const avatarNumber = Math.floor(Math.random() * 1) + 1;
-      return `/avatars/avatar${avatarNumber}.webp`;
+      return `${import.meta.env.BASE_URL}/avatars/avatar${avatarNumber}.webp`;
     },
   },
 };
