@@ -58,11 +58,20 @@ export default {
 <style scoped>
 .character {
   text-align: center;
+  width: 250px;
+  padding: 20px;
+  border: 2px solid #333;
+  border-radius: 8px; /* Rounds the corners slightly */
+  position: absolute; /* Positions it relative to the top-left of the screen */
+  top: 15px; /* Adjusts the distance from the top */
+  left: 15px; /* Adjusts the distance from the left */
+  background-color: #ede0d4;
 }
 
 .character img {
   width: 150px;
   height: 150px;
-  border-radius: 50%;
+  border-radius: 80%;
+  margin-top: 10px;
 }
 </style>
