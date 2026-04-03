@@ -32,13 +32,14 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
-import { gameState } from './game/state'
+import { gameState, saveState } from './game/state'
 import { startEngine, stopEngine, skipDays } from './game/engine'
 import Character from './components/Character.vue'
 import GameTabs from './ui/GameTabs.vue'
 
 function togglePause() {
   gameState.time.paused = !gameState.time.paused
+  saveState()
 }
 
 function toggleSpeed() {
@@ -49,11 +50,18 @@ function skip10Days() {
   skipDays(10)
 }
 
+function onBeforeUnload() {
+  saveState()
+}
+
 onMounted(() => {
+  window.addEventListener('beforeunload', onBeforeUnload)
   startEngine()
 })
 
 onUnmounted(() => {
+  window.removeEventListener('beforeunload', onBeforeUnload)
+  saveState()
   stopEngine()
 })
 </script>

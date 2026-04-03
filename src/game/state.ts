@@ -12,7 +12,9 @@ export interface GameState {
   time: TimeState
 }
 
-export const gameState = reactive<GameState>({
+const STORAGE_KEY = 'oneShortLife_gameState'
+
+const defaults: GameState = {
   time: {
     day: 1,
     age: 10,
@@ -20,12 +22,28 @@ export const gameState = reactive<GameState>({
     gameSpeed: 1,
     paused: true,
   },
-})
+}
+
+export const gameState = reactive<GameState>(loadState())
+
+function loadState(): GameState {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const saved = JSON.parse(raw) as GameState
+      return { time: { ...defaults.time, ...saved.time } }
+    }
+  } catch {
+    // corrupted save — start fresh
+  }
+  return structuredClone(defaults)
+}
+
+export function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState))
+}
 
 export function resetState() {
-  gameState.time.day = 1
-  gameState.time.age = 10
-  gameState.time.totalDays = 0
-  gameState.time.gameSpeed = 1
-  gameState.time.paused = true
+  Object.assign(gameState.time, structuredClone(defaults.time))
+  saveState()
 }

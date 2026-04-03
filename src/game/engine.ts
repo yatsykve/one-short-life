@@ -1,17 +1,21 @@
-import { gameState } from './state'
+import { gameState, saveState } from './state'
 
 const TICK_INTERVAL = 100 // ms
 const REAL_SECONDS_TOTAL = 50_400 // 14 hours
 const TOTAL_GAME_DAYS = 25_550 // 70 years × 365 days
 const DAYS_PER_REAL_SECOND = TOTAL_GAME_DAYS / REAL_SECONDS_TOTAL // ~0.507
 
+const SAVE_INTERVAL = 2000 // ms
+
 let lastTimestamp = 0
+let lastSaveTime = 0
 let tickTimer: ReturnType<typeof setInterval> | null = null
 
 function tick() {
   const now = performance.now()
   if (lastTimestamp === 0) {
     lastTimestamp = now
+    lastSaveTime = now
     return
   }
 
@@ -27,6 +31,11 @@ function tick() {
   const daysDelta = realElapsedSec * DAYS_PER_REAL_SECOND * gameState.time.gameSpeed
 
   advanceTime(daysDelta)
+
+  if (now - lastSaveTime >= SAVE_INTERVAL) {
+    saveState()
+    lastSaveTime = now
+  }
 }
 
 function advanceTime(daysDelta: number) {
@@ -46,6 +55,7 @@ function advanceTime(daysDelta: number) {
 export function skipDays(days: number) {
   if (!gameState.time.paused || days > 0) {
     advanceTime(days)
+    saveState()
   }
 }
 
