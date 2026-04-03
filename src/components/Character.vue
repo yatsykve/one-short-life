@@ -1,5 +1,8 @@
 <template>
   <div class="character">
+    <h1>One Short Life</h1>
+    <p class="slogan">One life. Countless paths.</p>
+    <hr />
     <h2>{{ character.name }}</h2>
     <p>Age: {{ character.age }}</p>
     <img :src="character.avatar" alt="Avatar Image"/>
@@ -61,11 +64,27 @@ export default {
   width: 250px;
   padding: 20px;
   border: 2px solid #333;
-  border-radius: 8px; /* Rounds the corners slightly */
-  position: absolute; /* Positions it relative to the top-left of the screen */
-  top: 15px; /* Adjusts the distance from the top */
-  left: 15px; /* Adjusts the distance from the left */
+  border-radius: 8px;
+  position: absolute;
+  top: 15px;
+  left: 15px;
   background-color: #ede0d4;
+}
+
+.character h1 {
+  margin: 0 0 4px 0;
+  font-size: 1.4em;
+}
+
+.slogan {
+  font-style: italic;
+  margin: 0 0 10px 0;
+}
+
+.character hr {
+  border: none;
+  border-top: 1px solid #7a5c3b;
+  margin: 10px 0;
 }
 
 .character img {
