@@ -42,7 +42,7 @@ All possible skills the character can practice. Displayed as a full list; one sk
 
 ## Progression System
 
-Jobs and skills share the same XP/leveling mechanic. Each tick while active, the entity gains XP. The level is derived from accumulated XP via a three-phase formula.
+Jobs and skills share the same XP/leveling mechanic. Each tick while active, the entity gains XP. The level is derived from accumulated XP via a single smooth formula.
 
 ### XP Per Tick
 
@@ -72,9 +72,13 @@ Things the character owns. Divided into two categories:
 - **Carry-on (Inventory)**: Items the character carries — tools, clothing, consumables. Portable and personal.
 - **World assets**: Things that exist in the world — property, housing, land. Starting option: Street Shelter.
 
+*Not yet implemented.*
+
 ### 5. Events
 
 A list of events waiting for the player's input or attention. These are active events that have triggered and require a decision or acknowledgement.
+
+*Not yet implemented.*
 
 ### Future: Places
 

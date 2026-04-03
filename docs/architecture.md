@@ -57,14 +57,9 @@ Events are defined as data (JSON-like structures), not code. The engine reads ev
 
 ### Speed control
 
-The engine uses a `gameSpeed` multiplier applied to delta time. This affects everything — all systems consume the same delta.
+The engine uses a `gameSpeed` multiplier applied to delta time. This affects everything — time progression, XP gain.
 
-Speed control is needed for:
-- **Development/testing** (10x, 50x, etc.)
-- **Game events** (an event could slow or speed time as a mechanic)
-- **User settings** (1x, 1.5x, 2x exposed in UI)
-
-The speed multiplier is part of game state so it can be saved/restored.
+UI exposes two buttons: slow down (÷2) and speed up (×2). Range: 0.25x to 64x. The speed multiplier is part of game state so it persists across sessions.
 
 ## Game State Structure
 
@@ -109,36 +104,25 @@ gameState
 ```
 src/
   game/
-    state.ts              # Reactive game state definition + initialization
-    engine.ts             # Tick loop: advance time, process active events
-    actions.ts            # Player actions (start job, practice skill, respond to event)
-    events/
-      processor.ts        # Generic event processor (reads event definitions, applies effects)
-      types.ts            # Event type definitions
+    state.ts              # Reactive game state + save/load to localStorage
+    engine.ts             # Tick loop: advance time, grant XP, auto-save
     systems/
-      time.ts             # Advance day/age based on delta
-      jobs.ts             # Job XP gain, income calculation
-      skills.ts           # Skill XP gain, level calculation
-      conditions.ts       # Condition checks and effects
-    persistence.ts        # Save/load to localStorage (backlog — not yet implemented)
+      progression.ts      # Shared XP/level formula: totalXp = 93 × L^1.68
   data/
-    scenario.ts           # The world definition: all potential events, jobs, skills, properties
-    jobs.ts               # Job definitions (id, name, base income, stat requirements)
-    skills.ts             # Skill definitions (id, name, XP curve)
-    events.ts             # Event definitions (id, probability, effects, conditions)
-    properties.ts         # Housing definitions
+    jobs.ts               # Job definitions (id, name, description, baseIncome)
+    skills.ts             # Skill definitions (id, name, description)
   ui/
-    components/
-      PlayerPanel.vue     # Left side: character info, age, day counter, gold
-      GameTabs.vue        # Tab container for middle section
-      JobsTab.vue         # Jobs tab content
-      SkillsTab.vue       # Skills tab content
-      AssetsTab.vue       # Assets tab content
-      EventsTab.vue       # Active events tab content
-      SpeedControl.vue    # Pause / speed adjustment controls
-  App.vue                 # Root layout: PlayerPanel + GameTabs
+    GameTabs.vue          # Tab container for middle section
+    JobsTab.vue           # Jobs list with levels and progress bars
+    SkillsTab.vue         # Skills list with levels and progress bars
+    AssetsTab.vue         # Assets tab (placeholder)
+    EventsTab.vue         # Events tab (placeholder)
+    ProgressBar.vue       # Reusable XP progress bar component
+  components/
+    Character.vue         # Character name, avatar, reroll button
+  App.vue                 # Root layout: left panel + GameTabs
   main.ts                 # Bootstrap: init state, start engine, mount app
-  style.css               # Global styles
+  style.css               # Global reset styles
 ```
 
 ## Engine Loop (tick)
@@ -148,25 +132,23 @@ Each tick (100ms real time):
 ```
 1. Calculate delta = real elapsed time × gameSpeed
 2. Advance time (convert delta to in-game days)
-3. For each active event:
-   a. Roll probability against random number
-   b. If triggered: apply effects (modify state, add/remove events, push log message)
-4. Vue reactivity automatically updates UI
+3. Grant XP to active job and active skill (base × gameSpeed)
+4. Auto-save to localStorage every 2 seconds
+5. Vue reactivity automatically updates UI
 ```
-
-Systems like jobs, skills, and conditions don't have their own tick functions — they are driven entirely by events. The engine is a generic event processor.
 
 ## Data Flow
 
 ```
-Player clicks "Start Begging"
-  → actions.ts: activate job-related events
-    → state.events.active gets new entries
-      → next tick: engine processes them
-        → state.economy.gold increases
-        → state.jobs.experience updates
-          → Vue re-renders UI
+Player clicks a job → gameState.jobs.current = jobId
+  → next tick: engine grants XP to that job
+    → gameState.jobs.xp[jobId] increases
+      → Vue re-renders level + progress bar
 ```
+
+## Persistence
+
+Game state auto-saves to localStorage every 2 seconds while running. Also saves immediately on pause, speed change, and tab close (`beforeunload`). On startup, loads saved state and merges with defaults (handles new fields gracefully). Corrupted saves fall back to defaults.
 
 ## Technology
 

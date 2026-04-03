@@ -4,17 +4,21 @@ Prioritized list of ideas and future work. Keep this list ordered by priority �
 
 ## Near-term
 
-1. **Persistence (save/load)** — Auto-save to localStorage every few seconds. Load on startup. Essential for any real playtesting since a 14-hour game can't be played in one sitting.
-2. **Offline progress** — When player returns, calculate what happened while away based on elapsed real time. Core idle game feature, depends on persistence.
+1. **Economy system** — Jobs earn gold based on baseIncome × level. Display balance in left panel.
+2. **Offline progress** — When player returns, calculate what happened while away based on elapsed real time. Core idle game feature.
+3. **More jobs and skills** — Expand beyond the initial 3 of each. Add unlock requirements (level, stats).
 
 ## Medium-term
 
-3. **Condition system** — Health, starvation, illness, wounds. Multiple simultaneous conditions affecting stats and gameplay. Events will apply/remove conditions.
-4. **Property system** — Housing options with effects on character. Starting: Street Shelter.
-5. **Inventory system** — Items that the character owns, acquired through events.
+4. **Character stats** — Strength, Dexterity, Intelligence, Health. Derived from skills, conditions, and events.
+5. **Condition system** — Health, starvation, illness, wounds. Multiple simultaneous conditions affecting stats and gameplay. Applied/removed by events.
+6. **Assets: Inventory** — Carry-on items (tools, clothing, consumables) acquired through events.
+7. **Assets: World** — Property/housing options with effects on character. Starting: Street Shelter.
+8. **Event system** — Generic event processor. Events as data with probability, effects, conditions. Everything driven by events instead of direct engine logic.
 
 ## Long-term
 
-6. **Scenario builder** — Let anyone create their own world by defining events, jobs, skills. The architecture supports this since the world is entirely data-driven.
-7. **Backend sync** — Send full gameState snapshot to server. Enables cloud saves and scenario sharing. Keep sync simple: full state snapshots, no partial sync.
-8. **Multiple scenarios** — Load different worlds/scenarios. Depends on scenario builder and backend.
+9. **Places** — Locations the character can visit or inhabit.
+10. **Scenario builder** — Let anyone create their own world by defining events, jobs, skills.
+11. **Backend sync** — Cloud saves and scenario sharing via full state snapshots.
+12. **Multiple scenarios** — Load different worlds/scenarios.

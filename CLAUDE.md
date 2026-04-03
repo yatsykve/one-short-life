@@ -52,3 +52,7 @@ Strict mode enabled. The tsconfig enforces `noUnusedLocals`, `noUnusedParameters
 ## Deployment
 
 GitHub Actions (`.github/workflows/deploy.yml`) builds and deploys to GitHub Pages on push to `main`. Uses Node.js 22.
+
+## Workflow
+
+Always commit and push to git at the end of each task.
