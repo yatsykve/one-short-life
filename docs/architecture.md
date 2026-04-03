@@ -81,11 +81,11 @@ gameState
 ├── character
 │   ├── name
 │   ├── avatar
-│   └── stats (strength, dexterity, intelligence, health)
-├── economy
+│   ├── stats (strength, dexterity, intelligence, health)
 │   ├── gold (current balance)
 │   ├── totalIncome (lifetime)
-│   └── totalSpending (lifetime)
+│   ├── totalSpending (lifetime)
+│   └── conditions (list of active condition IDs — health, starvation, illness, wounds)
 ├── jobs
 │   ├── current (active job ID or null)
 │   ├── available (list of unlocked job IDs)
@@ -95,9 +95,8 @@ gameState
 │   ├── available (list of unlocked skill IDs)
 │   └── experience (map: skillId → XP)
 ├── assets
-│   ├── property (current housing ID)
-│   └── inventory (list of item IDs)
-├── conditions (list of active condition IDs)
+│   ├── inventory (list of item IDs — carry-on items)
+│   └── world (list of world asset IDs — property, housing, land)
 ├── events
 │   ├── active (list of active event instances)
 │   └── log (history of recent event messages)

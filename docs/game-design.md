@@ -8,65 +8,87 @@ The game is centered around one character throughout their entire lifespan. Game
 
 Inspired by idle incremental games with RPG elements. The character starts with basic, randomly generated stats that influence their development throughout the game.
 
-## Character
+## Global Entities
 
-### Basic Info
+The game has five top-level entities. Each maps to a tab in the UI (except Character, which lives in the left panel).
+
+### 1. Character
+
+The player's avatar and core identity. Always visible in the left panel.
 
 - **Name**: Randomly generated at game start
 - **Avatar**: Pixel art representation
+- **Stats**: Strength, Dexterity, Intelligence, Health
+- **Money**: Single gold tracker (balance, lifetime income, lifetime spending)
+- **Conditions**: Part of the character. Tracks multiple simultaneous states — health, starvation, illness, wounds — that affect stats and gameplay. Conditions are applied/removed by events.
 
-### Stats
+### 2. Jobs
 
-- **Strength**: Physical power. Affects ability to perform physical tasks and job requirements.
-- **Dexterity**: Agility and precision. Influences evasion, delicate tasks, and job requirements.
-- **Concentration / Intelligence / Wisdom**: Focus and mental endurance. Affects skill usage and learning.
-- **Health**: Vitality and overall well-being.
+All possible jobs the character can work. Displayed as a full list; one job can be active at a time.
 
-### Money Tracker
+- Working a job slowly gains experience, improving effectiveness
+- Base income scales with experience (geometric progression, capped)
+- Specific jobs provide a static stat boost for learning particular skills (not affected by job experience)
+- Jobs use the same progression system as skills (see Progression System below)
+- **Starting job**: Begging
 
-A single general gold tracker represents the character's wealth.
+### 3. Skills
 
-### Condition System (Optional)
+All possible skills the character can practice. Displayed as a full list; one skill can be active at a time.
 
-Tracks multiple simultaneous conditions — health, starvation, illness, wounds — that affect the character's overall state and stats.
+- Skills use the same progression system as jobs (see Progression System below)
+- Skill levels affect base job income via a multiplier
+- **Starting skills**: A basic set available from the start
+
+## Progression System
+
+Jobs and skills share the same XP/leveling mechanic. Each tick while active, the entity gains XP. The level is derived from accumulated XP via a three-phase formula.
+
+### XP Per Tick
+
+Each active job or skill gains a base amount of XP per tick (currently 1 XP/tick). Future modifiers (stats, items, events) can scale this.
+
+### Level Formula
+
+Single smooth power curve — no phases, no discontinuities, no hard cap:
+
+`totalXp = 93 × L^1.68`
+
+**Target pacing** (at 1 XP/tick, ~7,200 ticks/year):
+- Level 20 by ~2 in-game years (~14,400 XP)
+- Level 100 by ~30 in-game years (~213,000 XP)
+- Levels continue indefinitely beyond 100
+
+Each next level costs slightly more XP than the last (sub-quadratic growth). The curve is smooth everywhere — no jumps or boundary effects.
+
+### Progress Bar
+
+Each job/skill displays a progress bar showing XP progress toward the next level. The bar fills from 0% to 100% as XP accumulates between the current and next level thresholds.
+
+### 4. Assets
+
+Things the character owns. Divided into two categories:
+
+- **Carry-on (Inventory)**: Items the character carries — tools, clothing, consumables. Portable and personal.
+- **World assets**: Things that exist in the world — property, housing, land. Starting option: Street Shelter.
+
+### 5. Events
+
+A list of events waiting for the player's input or attention. These are active events that have triggered and require a decision or acknowledgement.
+
+### Future: Places
+
+Locations the character can visit or inhabit. Not yet designed — placeholder for future expansion.
 
 ## Gameplay
 
 ### UI Layout
 
-- **Left panel (static)**: Player section visible across all tabs. Displays:
+- **Left panel (static)**: Character section visible across all tabs. Displays:
   - Current age and passing days (time flow)
   - Money tracker with total income and spending near the balance
-  - Key character stats
-- **Middle section**: Tabbed content area
-
-### Tabs
-
-#### Jobs
-
-- Character can hold one job at a time
-- Working a job slowly gains experience, improving effectiveness
-- Base income scales with experience (geometric progression, capped)
-- Specific jobs provide a static stat boost for learning particular skills (not affected by job experience)
-- **Starting job**: Begging
-
-#### Skills
-
-- Player can practice one skill at a time
-- Skills have levels; each level requires progressively more time
-- Experience gain is static
-- Skill levels affect base job income via a multiplier
-- **Starting skills**: A basic set available from the start
-
-#### Assets (Holdings)
-
-- **Property**: Choose one housing option at a time. Starting option: Street Shelter.
-- **Inventory**: Items the character owns.
-- **Other Belongings**: Additional personal assets.
-
-#### Active Events
-
-Tracks ongoing events or activities requiring player attention.
+  - Key character stats and conditions
+- **Middle section**: Tabbed content area (Jobs, Skills, Assets, Events)
 
 ## Events System
 

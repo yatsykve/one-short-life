@@ -10,19 +10,15 @@
       <div class="time-display">
         <p class="age">Age: {{ gameState.time.age }}</p>
         <p class="day">Day {{ gameState.time.day }} of 365</p>
-        <p class="speed" v-if="gameState.time.gameSpeed !== 1">
-          Speed: {{ gameState.time.gameSpeed }}x
-        </p>
+        <p class="speed">Speed: {{ gameState.time.gameSpeed }}x</p>
       </div>
 
       <div class="controls">
+        <button @click="slowDown">&#x00AB;</button>
         <button @click="togglePause">
           {{ gameState.time.paused ? 'Play' : 'Pause' }}
         </button>
-        <button @click="toggleSpeed">
-          {{ gameState.time.gameSpeed === 1 ? '2x' : '1x' }}
-        </button>
-        <button @click="skip10Days">+10 days</button>
+        <button @click="speedUp">&#x00BB;</button>
       </div>
     </div>
 
@@ -33,7 +29,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { gameState, saveState } from './game/state'
-import { startEngine, stopEngine, skipDays } from './game/engine'
+import { startEngine, stopEngine } from './game/engine'
 import Character from './components/Character.vue'
 import GameTabs from './ui/GameTabs.vue'
 
@@ -42,12 +38,14 @@ function togglePause() {
   saveState()
 }
 
-function toggleSpeed() {
-  gameState.time.gameSpeed = gameState.time.gameSpeed === 1 ? 2 : 1
+function speedUp() {
+  gameState.time.gameSpeed = Math.min(gameState.time.gameSpeed * 2, 64)
+  saveState()
 }
 
-function skip10Days() {
-  skipDays(10)
+function slowDown() {
+  gameState.time.gameSpeed = Math.max(gameState.time.gameSpeed / 2, 0.25)
+  saveState()
 }
 
 function onBeforeUnload() {
