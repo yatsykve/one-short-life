@@ -15,7 +15,7 @@ Read these docs before making changes — they are the source of truth for desig
 - `docs/game-design.md` — Full game design document (character, stats, gameplay, events)
 - `docs/architecture.md` — Technical architecture: state, engine, event system, project structure
 - `docs/style-guide.md` — Color palette
-- `docs/implementation-status.md` — What's built vs. planned
+- `docs/implementation-status.md` — What's built vs. planned (**read this first** — the architecture docs describe the target design, not the current state)
 - `docs/references.md` — Inspiration games (Progress Knight is the primary reference)
 - `docs/backlog.md` — Prioritized list of future work. Keep it updated and prioritized when adding ideas.
 
@@ -29,20 +29,43 @@ No test runner or linter is configured.
 
 ## Architecture
 
-See `docs/architecture.md` for full details. Key concepts:
+The docs describe the *target* architecture. The current implementation is simpler — read `docs/implementation-status.md` to know what's actually built.
 
-- **Everything is an event.** The game world is empty without events. Jobs, skills, income, death — all driven by events.
-- **State machine + tick loop + UI projection.** Single reactive state, engine ticks at 100ms, Vue renders state.
-- **Game engine** processes active events each tick. No separate system tick functions — events drive all state changes.
-- **Scenario** = data-defined world. All potential events, jobs, skills defined as data, not code logic.
-- **Speed control** via `gameSpeed` multiplier on delta time. Used for dev/testing, game events, and user settings.
+### What's actually built
+
+**Engine loop** (`src/game/engine.ts`) — ticks every 100ms, advances time and grants XP directly:
+```
+1. Calculate daysDelta = realElapsedMs × DAYS_PER_REAL_SECOND × gameSpeed
+2. Advance age/day from daysDelta (game ends at age 80)
+3. Grant XP to gameState.jobs.current and gameState.skills.current
+4. Auto-save to localStorage every 2 seconds
+```
+
+**Game state** (`src/game/state.ts`) — single Vue `reactive()` object, persisted under key `oneShortLife_gameState`:
+```
+gameState
+├── time  { day, age, totalDays, gameSpeed, paused }
+├── jobs  { current: string|null, xp: Record<string, number> }
+└── skills { current: string|null, xp: Record<string, number> }
+```
+
+**Character state** — intentionally outside `gameState`. `Character.vue` has its own local `reactive()` and saves independently to localStorage under key `'character'`. It is not included in `saveState()` / `resetState()`.
+
+**Progression formula** (`src/game/systems/progression.ts`): `totalXp = 93 × L^1.68`. No level cap. Shared by both jobs and skills.
+
+**Data definitions** — `src/data/jobs.ts` and `src/data/skills.ts` are plain arrays of `JobDefinition` / `SkillDefinition`. Not yet a scenario system.
+
+### Planned but not yet built
+
+The event-driven architecture described in `docs/architecture.md` (generic event processor, conditions, assets, character stats) is on the backlog. Currently XP is granted directly by the engine, not via events.
 
 ### Project layout
 
-- `src/game/` — Engine, state, actions, event processor
-- `src/data/` — Scenario definitions (jobs, skills, events, properties)
-- `src/ui/` — Vue components
-- `public/` — Static assets (WebP images, avatars)
+- `src/game/` — Engine, state, progression system
+- `src/data/` — Job and skill definitions
+- `src/ui/` — Vue tab components (Assets and Events tabs are placeholders)
+- `src/components/` — Character component (name, avatar, reroll)
+- `public/` — Static assets (WebP avatars)
 - **Base path**: `/one-short-life/` (configured in `vite.config.ts` for GitHub Pages)
 
 ## TypeScript
