@@ -28,11 +28,17 @@ _Avoid_: status, effect, buff, debuff
 A game-world occurrence defined as data. Has a probability of firing each tick while active. When it fires, it can update stats, conditions, money, jobs, skills, or other events.
 _Avoid_: action, trigger, callback
 
+**Scenario**:
+The data definition of a game world — all possible Jobs, Skills, and Events. Loaded at game start; determines what the character can encounter. Jobs and Skills are dynamic: they appear and disappear in the game context based on Events, not as a static list.
+_Avoid_: config, data file, world file
+
 ## Relationships
 
 - A **Job** and a **Skill** both use **Progression**, but are otherwise independent concepts
 - **Conditions** are applied and removed by **Events**
+- **Events** load and unload **Jobs** and **Skills** into the game context
 - At most one **Job** and one **Skill** can be active at a time
+- A **Scenario** defines all possible **Jobs**, **Skills**, and **Events** for a game world
 
 ## Example dialogue
 
