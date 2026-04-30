@@ -1,8 +1,13 @@
-import { _mutableState as s } from './state'
-import { saveState } from './state'
+import { _mutableState as s, saveState } from './state'
 
 const TOTAL_GAME_DAYS = 25_550
 const MAX_AGE = 80
+
+export function setCharacter(name: string, avatar: string): void {
+  s.character.name = name
+  s.character.avatar = avatar
+  saveState()
+}
 
 export function advanceTime(daysDelta: number): void {
   s.time.totalDays += daysDelta

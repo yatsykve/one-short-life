@@ -4,6 +4,10 @@ An idle incremental RPG about a single character's life from age 10 to 80. The p
 
 ## Language
 
+**Character**:
+The player's avatar throughout a single life. Has a name, avatar, age, stats, and conditions. Fully owned by `gameState` — resetting `gameState` means starting a new life with a new Character.
+_Avoid_: player, hero, entity
+
 **Job**:
 An occupation the character *works*. Earns income per tick while active; levels up through accumulated XP.
 _Avoid_: skill, activity, discipline, trainable

@@ -4,7 +4,8 @@ Prioritized list of ideas and future work. Keep this list ordered by priority �
 
 ## Near-term
 
-1. **Economy system** — Jobs earn gold based on baseIncome × level. Display balance in left panel.
+1. **Main menu / New Game flow** — Replace the prototype Reroll button with a proper pre-game menu. Player sets name and avatar before starting. Once the game is in progress, the character is locked — no rerolling. The menu also houses the New Game action (full reset). The in-game Reroll button in `Character.vue` should be removed as part of this work.
+2. **Economy system** — Jobs earn gold based on baseIncome × level. Display balance in left panel.
 2. **Offline progress** — When player returns, calculate what happened while away based on elapsed real time. Core idle game feature.
 3. **More jobs and skills** — Expand beyond the initial 3 of each. Add unlock requirements (level, stats).
 
