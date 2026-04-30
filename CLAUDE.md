@@ -79,3 +79,17 @@ GitHub Actions (`.github/workflows/deploy.yml`) builds and deploys to GitHub Pag
 ## Workflow
 
 Always commit and push to git at the end of each task.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default label vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repo: `CONTEXT.md` at root + `docs/adr/`. See `docs/agents/domain.md`.
