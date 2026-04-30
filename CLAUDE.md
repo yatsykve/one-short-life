@@ -80,6 +80,10 @@ GitHub Actions (`.github/workflows/deploy.yml`) builds and deploys to GitHub Pag
 
 Always commit and push to git at the end of each task.
 
+### State mutation rule
+
+`gameState` is read-only. All writes to game state go through `src/game/mutations.ts` — never write to `gameState` properties directly. This is enforced by the `Readonly<GameState>` export (shallow) and by ADR-0001. The only exception is `_mutableState` in `state.ts` itself, which is the internal reference `mutations.ts` imports.
+
 ## Agent skills
 
 ### Issue tracker

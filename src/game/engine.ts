@@ -1,4 +1,5 @@
 import { gameState, saveState } from './state'
+import { advanceTime, grantJobXp, grantSkillXp } from './mutations'
 
 const TICK_INTERVAL = 100 // ms
 const REAL_SECONDS_TOTAL = 50_400 // 14 hours
@@ -40,31 +41,15 @@ function tick() {
   }
 }
 
-function advanceTime(daysDelta: number) {
-  gameState.time.totalDays += daysDelta
-
-  const totalYears = gameState.time.totalDays / 365
-  gameState.time.age = Math.floor(10 + totalYears)
-  gameState.time.day = Math.floor((gameState.time.totalDays % 365) + 1)
-
-  if (gameState.time.age >= 80) {
-    gameState.time.age = 80
-    gameState.time.day = 365
-    gameState.time.paused = true
-  }
-}
-
 function grantXp(speed: number) {
   const xp = BASE_XP_PER_TICK * speed
 
-  const activeJob = gameState.jobs.current
-  if (activeJob) {
-    gameState.jobs.xp[activeJob] = (gameState.jobs.xp[activeJob] ?? 0) + xp
+  if (gameState.jobs.current) {
+    grantJobXp(gameState.jobs.current, xp)
   }
 
-  const activeSkill = gameState.skills.current
-  if (activeSkill) {
-    gameState.skills.xp[activeSkill] = (gameState.skills.xp[activeSkill] ?? 0) + xp
+  if (gameState.skills.current) {
+    grantSkillXp(gameState.skills.current, xp)
   }
 }
 

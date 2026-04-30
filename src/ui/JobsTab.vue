@@ -18,7 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { gameState, saveState } from '../game/state'
+import { gameState } from '../game/state'
+import { selectJob } from '../game/mutations'
 import { jobs } from '../data/jobs'
 import { levelFromXp, progressToNextLevel } from '../game/systems/progression'
 import ProgressBar from './ProgressBar.vue'
@@ -36,8 +37,7 @@ function getProgress(id: string) {
 }
 
 function toggle(id: string) {
-  gameState.jobs.current = gameState.jobs.current === id ? null : id
-  saveState()
+  selectJob(gameState.jobs.current === id ? null : id)
 }
 </script>
 

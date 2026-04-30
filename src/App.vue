@@ -29,23 +29,17 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { gameState, saveState } from './game/state'
+import { togglePause, setSpeed } from './game/mutations'
 import { startEngine, stopEngine } from './game/engine'
 import Character from './components/Character.vue'
 import GameTabs from './ui/GameTabs.vue'
 
-function togglePause() {
-  gameState.time.paused = !gameState.time.paused
-  saveState()
-}
-
 function speedUp() {
-  gameState.time.gameSpeed = Math.min(gameState.time.gameSpeed * 2, 64)
-  saveState()
+  setSpeed(Math.min(gameState.time.gameSpeed * 2, 64))
 }
 
 function slowDown() {
-  gameState.time.gameSpeed = Math.max(gameState.time.gameSpeed / 2, 0.25)
-  saveState()
+  setSpeed(Math.max(gameState.time.gameSpeed / 2, 0.25))
 }
 
 function onBeforeUnload() {

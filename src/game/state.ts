@@ -44,7 +44,10 @@ const defaults: GameState = {
   },
 }
 
-export const gameState = reactive<GameState>(loadState())
+export const gameState: Readonly<GameState> = reactive<GameState>(loadState())
+
+// Internal mutable reference for mutations.ts only
+export const _mutableState = gameState as GameState
 
 function loadState(): GameState {
   try {
