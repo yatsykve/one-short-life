@@ -33,39 +33,44 @@ The docs describe the *target* architecture. The current implementation is simpl
 
 ### What's actually built
 
-**Engine loop** (`src/game/engine.ts`) — ticks every 100ms, advances time and grants XP directly:
+**Engine loop** (`src/game/engine.ts`) — ticks every 100ms, advances time and grants XP via mutations:
 ```
 1. Calculate daysDelta = realElapsedMs × DAYS_PER_REAL_SECOND × gameSpeed
-2. Advance age/day from daysDelta (game ends at age 80)
-3. Grant XP to gameState.jobs.current and gameState.skills.current
+2. Call mutations.advanceTime(daysDelta) — updates age/day, pauses at age 80
+3. Call mutations.grantJobXp / mutations.grantSkillXp for active job/skill
 4. Auto-save to localStorage every 2 seconds
 ```
 
-**Game state** (`src/game/state.ts`) — single Vue `reactive()` object, persisted under key `oneShortLife_gameState`:
+**Game state** (`src/game/state.ts`) — single Vue `reactive()` exported as `Readonly<GameState>`, persisted under key `oneShortLife_gameState`:
 ```
 gameState
-├── time  { day, age, totalDays, gameSpeed, paused }
-├── jobs  { current: string|null, xp: Record<string, number> }
-└── skills { current: string|null, xp: Record<string, number> }
+├── character { name, avatar }
+├── time      { day, age, totalDays, gameSpeed, paused }
+├── jobs      { current: string|null, xp: Record<string, number> }
+└── skills    { current: string|null, xp: Record<string, number> }
 ```
 
-**Character state** — intentionally outside `gameState`. `Character.vue` has its own local `reactive()` and saves independently to localStorage under key `'character'`. It is not included in `saveState()` / `resetState()`.
+**Mutations** (`src/game/mutations.ts`) — the only legal writer of `gameState`. All engine and UI writes go through here. See ADR-0001.
 
-**Progression formula** (`src/game/systems/progression.ts`): `totalXp = 93 × L^1.68`. No level cap. Shared by both jobs and skills.
+**Character** — part of `gameState.character`. `Character.vue` is a pure display component; it calls `mutations.setCharacter()` on first load if name is empty. `resetState()` resets character along with everything else (new game = new character).
 
-**Data definitions** — `src/data/jobs.ts` and `src/data/skills.ts` are plain arrays of `JobDefinition` / `SkillDefinition`. Not yet a scenario system.
+**Progression formula** (`src/game/systems/progression.ts`): `totalXp = 93 × L^1.68`. No level cap. Pure math — no knowledge of entities.
+
+**Data definitions** — `src/data/jobs.ts` and `src/data/skills.ts` are plain arrays. Placeholder until the event/scenario system is built. See ADR-0003.
 
 ### Planned but not yet built
 
-The event-driven architecture described in `docs/architecture.md` (generic event processor, conditions, assets, character stats) is on the backlog. Currently XP is granted directly by the engine, not via events.
+The event-driven architecture described in `docs/architecture.md` (generic event processor, conditions, assets, character stats, dynamic job/skill loading) is on the backlog. Currently XP is granted directly by the engine, not via events.
 
 ### Project layout
 
-- `src/game/` — Engine, state, progression system
-- `src/data/` — Job and skill definitions
+- `src/game/` — Engine, state, mutations, progression system
+- `src/data/` — Job and skill definitions (static placeholder)
 - `src/ui/` — Vue tab components (Assets and Events tabs are placeholders)
-- `src/components/` — Character component (name, avatar, reroll)
+- `src/components/` — Character display component
 - `public/` — Static assets (WebP avatars)
+- `CONTEXT.md` — Domain glossary (Job, Skill, Progression, Character, Event, Scenario, Condition)
+- `docs/adr/` — Architecture decision records
 - **Base path**: `/one-short-life/` (configured in `vite.config.ts` for GitHub Pages)
 
 ## TypeScript
